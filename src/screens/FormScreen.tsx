@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Button, Text } from 'react-native';
+import {View, Button, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import { fetchFormData } from '../services/api';
 import { getFormData, setFormData } from '../services/storage';
-import Checkbox from '../components/Checkbox';
 import NumberInput from '../components/NumberInput';
 import StringInput from '../components/StringInput';
+import RadioButton from "../components/RadioButton";
 
 const FormScreen: React.FC = () => {
+    const [title, setTitle] = useState('');
     const [groups, setGroups] = useState([]);
     const [formData, setFormData] = useState<Record<string, string | number | boolean>>({});
 
@@ -18,6 +19,7 @@ const FormScreen: React.FC = () => {
     const fetchData = async () => {
         try {
             const data = await fetchFormData();
+            setTitle(data.name);
             setGroups(data.groups);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -30,9 +32,7 @@ const FormScreen: React.FC = () => {
     };
 
     const handleChange = (key: string, value: string | number | boolean) => {
-        // Convert value to boolean if the checkpoint type is boolean
-        const newValue = typeof value === 'string' ? value === 'Yes' : value;
-        setFormData({ ...formData, [key]: newValue });
+        setFormData({ ...formData, [key]: value });
     };
 
     const handleSubmit = () => {
@@ -51,18 +51,21 @@ const FormScreen: React.FC = () => {
     };
 
     return (
-        <View>
+        <View style={styles.container}>
+            <Text style={styles.title}>{title}</Text>
             {groups.map((group: any, index: number) => (
                 <View key={index}>
-                    <Text>{group.name}</Text>
+                    <Text style={styles.groupName}>{group.name}</Text>
+
                     {group.checkpoints.map((checkpoint: any, idx: number) => (
                         <View key={idx}>
-                            <Text>{checkpoint.name}</Text>
+                            <Text style={styles.checkpointName}>{checkpoint.name}</Text>
                             {checkpoint.type === 'string' && (
                                 <StringInput
                                     placeholder={checkpoint.placeholder}
                                     onChange={(value) => handleChange(checkpoint.name, value)}
                                     value={formData[checkpoint.name] ?? ''}
+                                    style={styles.input}
                                 />
                             )}
                             {checkpoint.type === 'number' && (
@@ -70,23 +73,77 @@ const FormScreen: React.FC = () => {
                                     placeholder={checkpoint.placeholder}
                                     onChange={(value) => handleChange(checkpoint.name, value)}
                                     value={formData[checkpoint.name] ?? ''}
+                                    style={styles.input}
                                 />
                             )}
                             {checkpoint.type === 'boolean' && (
-                                <Checkbox
+                                <RadioButton
                                     options={checkpoint.values || []}
                                     onChange={(value) => handleChange(checkpoint.name, value)}
                                     value={formData[checkpoint.name] === true}
+                                    style={styles.checkbox}
                                 />
                             )}
                         </View>
                     ))}
                 </View>
             ))}
-            <Button title="Submit" onPress={handleSubmit} />
-            <Button title="Reset" onPress={handleReset} />
+            <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+                <Text style={styles.buttonText}>Submit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
+                <Text style={styles.buttonText}>Reset</Text>
+            </TouchableOpacity>
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: '#fff',
+    },
+    title: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 20,
+    },
+    groupName: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    checkpointName: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 5,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        padding: 10,
+        marginBottom: 5,
+    },
+    checkbox: {
+        marginBottom: 5,
+    },
+    submitButton: {
+        backgroundColor: '#007BFF',
+        padding: 10,
+        borderRadius: 5,
+        marginBottom: 10,
+    },
+    resetButton: {
+        backgroundColor: '#6c757d',
+        padding: 10,
+        borderRadius: 5,
+    },
+    buttonText: {
+        color: '#fff',
+        textAlign: 'center',
+    },
+});
 
 export default FormScreen;
