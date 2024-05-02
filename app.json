@@ -21,10 +21,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.mirmousavi.dynamicform"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "126b8f2f-17db-4292-b1f9-3ec1438aa3f7"
+      }
+    },
+    "owner": "mirmousavi"
   }
 }
