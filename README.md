@@ -18,11 +18,13 @@ npm start
 ```
 
 ## Sample API
-The form is generated based on json from the API. You can use the following json as an example:
-Sample API: https://dynamic-form.wiremockapi.cloud/api/v1
+The form is generated based on json from the API. 
+
 Update the API URL in the `.env` file.
 
-Here is a sample json:
+Sample API: https://dynamic-form.wiremockapi.cloud/api/v1
+
+ Here is a json as an example:
 
 ```JSON
 {
@@ -71,8 +73,8 @@ Here is a sample json:
 
 
 ## Screenshots
-![User management](screenshots/form.png)
-
+![form.png](screenshots%2Fform.png)
+![log.png](screenshots%2Flog.png)
 
 ## TODO
 
